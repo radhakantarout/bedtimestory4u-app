@@ -28,7 +28,7 @@ export default function Navbar() {
           href="/signup"
           className="px-4 py-2 bg-pink-500 rounded-full hover:bg-pink-600 transition"
         >
-          Get Started
+          Get  Started
         </Link>
       </div>
     </nav>
