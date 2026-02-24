@@ -10,11 +10,9 @@ export default function CreateStory() {
   const [length, setLength] = useState("short");
   const [story, setStory] = useState("");
   const [loading, setLoading] = useState(false);
+  const [audioUrl, setAudioUrl] = useState("");
 
   const generateStory = async () => {
-    setLoading(true);
-    setStory("");
-
     try {
       const response = await fetch("/api/generate-story", {
         method: "POST",
@@ -30,10 +28,44 @@ export default function CreateStory() {
       });
 
       const data = await response.json();
-      setStory(data.story);
+      return data.story;
     } catch (error) {
       console.error(error);
-      alert("Something went wrong");
+      alert("Something went wrong while generating the story");
+      return null;
+    }
+  };
+
+  const generateAudio = async () => {
+    setLoading(true);
+    setAudioUrl("");
+
+    const generatedStory = await generateStory();
+    if (!generatedStory) {
+      setLoading(false);
+      return;
+    }
+
+    setStory(generatedStory);
+
+    try {
+      const response = await fetch("/api/generate-audio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: generatedStory,
+          voiceId: "NQux3HSK2FL69zwWs703", // replace with ElevenLabs voice ID
+        }),
+      });
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setAudioUrl(url);
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong while generating the audio");
     }
 
     setLoading(false);
@@ -85,19 +117,18 @@ export default function CreateStory() {
             </select>
 
             <button
-              onClick={generateStory}
+              onClick={generateAudio}
               className="bg-pink-500 py-3 rounded hover:bg-pink-600 transition"
             >
-              {loading ? "Generating..." : "Generate Story"}
+              {loading ? "Generating Voice..." : "Generate Voice 🎙️"}
             </button>
           </div>
         </div>
 
-        {story && (
-          <div className="mt-10 w-full max-w-2xl bg-purple-950 p-6 rounded-xl">
-            <h2 className="text-xl font-bold mb-4">Your Story ✨</h2>
-            <p className="whitespace-pre-wrap text-gray-200">{story}</p>
-          </div>
+        {audioUrl && (
+          <audio controls className="mt-4 w-full">
+            <source src={audioUrl} type="audio/mpeg" />
+          </audio>
         )}
       </div>
     </>
