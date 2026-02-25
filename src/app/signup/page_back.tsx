@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { signUpUser, confirmUser } from "@/lib/cognito";
 
 const countryCodes = [
@@ -12,98 +11,56 @@ const countryCodes = [
 ];
 
 export default function Signup() {
-  const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [countryCode, setCountryCode] = useState("+91");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
   const [otp, setOtp] = useState("");
-
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  // ---------------- SIGNUP ----------------
   const handleSignup = async () => {
     setError("");
-
-    if (!email || !phone || !password || !rePassword) {
-      setError("All fields are required");
-      return;
-    }
 
     if (password !== rePassword) {
       setError("Passwords do not match");
       return;
     }
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters");
-      return;
-    }
-
     try {
-      setLoading(true);
-
       await signUpUser(email, password, `${countryCode}${phone}`);
-
       setStep(2);
     } catch (err: any) {
-      setError(err.message || "Signup failed");
-    } finally {
-      setLoading(false);
+      setError(err.message);
     }
   };
 
-  // ---------------- CONFIRM OTP ----------------
   const handleConfirm = async () => {
-    setError("");
-
-    if (!otp) {
-      setError("Please enter OTP");
-      return;
-    }
-
     try {
-      setLoading(true);
-
       await confirmUser(email, otp);
-
-      alert("Account verified successfully!");
-
-      // Redirect to login after 1.5 seconds
-      setTimeout(() => {
-        router.push("/login");
-      }, 1500);
+      alert("Account verified! Please login.");
     } catch (err: any) {
-      setError(err.message || "Invalid OTP");
-    } finally {
-      setLoading(false);
+      setError(err.message);
     }
   };
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center">
-      <div className="bg-purple-900 p-8 rounded-xl w-full max-w-md shadow-lg">
+      <div className="bg-purple-900 p-8 rounded-xl w-full max-w-md">
 
-        {/* STEP 1 — SIGNUP */}
         {step === 1 && (
           <>
-            <h1 className="text-xl mb-6 text-center font-semibold">
-              Create Account
-            </h1>
+            <h1 className="text-xl mb-6 text-center">Create Account</h1>
 
             {error && (
-              <p className="text-red-400 mb-4 text-sm text-center">{error}</p>
+              <p className="text-red-400 mb-4 text-sm">{error}</p>
             )}
 
             <input
               type="email"
               placeholder="Email"
-              className="p-3 w-full mb-4 bg-black border rounded focus:outline-none"
-              value={email}
+              className="p-3 w-full mb-4 bg-black border rounded"
               onChange={(e) => setEmail(e.target.value)}
             />
 
@@ -123,8 +80,7 @@ export default function Signup() {
               <input
                 type="tel"
                 placeholder="Mobile number"
-                className="p-3 w-full bg-black border rounded focus:outline-none"
-                value={phone}
+                className="p-3 w-full bg-black border rounded"
                 onChange={(e) => setPhone(e.target.value)}
               />
             </div>
@@ -132,58 +88,46 @@ export default function Signup() {
             <input
               type="password"
               placeholder="Password"
-              className="p-3 w-full mb-4 bg-black border rounded focus:outline-none"
-              value={password}
+              className="p-3 w-full mb-4 bg-black border rounded"
               onChange={(e) => setPassword(e.target.value)}
             />
 
             <input
               type="password"
               placeholder="Re-enter Password"
-              className="p-3 w-full mb-6 bg-black border rounded focus:outline-none"
-              value={rePassword}
+              className="p-3 w-full mb-6 bg-black border rounded"
               onChange={(e) => setRePassword(e.target.value)}
             />
 
             <button
               onClick={handleSignup}
-              disabled={loading}
-              className="bg-pink-500 p-3 w-full rounded hover:bg-pink-600 transition disabled:opacity-50"
+              className="bg-pink-500 p-3 w-full rounded hover:bg-pink-600"
             >
-              {loading ? "Creating Account..." : "Sign Up"}
+              Sign Up
             </button>
           </>
         )}
 
-        {/* STEP 2 — OTP VERIFY */}
         {step === 2 && (
           <>
-            <h1 className="text-xl mb-6 text-center font-semibold">
-              Verify Email OTP
-            </h1>
-
-            <p className="text-sm text-gray-300 mb-4 text-center">
-              OTP sent to <span className="text-white">{email}</span>
-            </p>
+            <h1 className="text-xl mb-6 text-center">Verify Email OTP</h1>
 
             {error && (
-              <p className="text-red-400 mb-4 text-sm text-center">{error}</p>
+              <p className="text-red-400 mb-4 text-sm">{error}</p>
             )}
 
             <input
               type="text"
               placeholder="Enter OTP"
-              className="p-3 w-full mb-4 bg-black border rounded focus:outline-none"
-              value={otp}
+              className="p-3 w-full mb-4 bg-black border rounded"
               onChange={(e) => setOtp(e.target.value)}
             />
 
             <button
               onClick={handleConfirm}
-              disabled={loading}
-              className="bg-green-500 p-3 w-full rounded hover:bg-green-600 transition disabled:opacity-50"
+              className="bg-green-500 p-3 w-full rounded hover:bg-green-600"
             >
-              {loading ? "Verifying..." : "Verify Account"}
+              Verify Account
             </button>
           </>
         )}

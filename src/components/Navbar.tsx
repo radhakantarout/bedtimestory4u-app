@@ -30,6 +30,10 @@ export default function Navbar() {
         >
           Get  Started
         </Link>
+
+        <Link href="/clone-voice" className="px-4 py-2 hover:text-pink-400">
+          Clone Voice
+        </Link>
       </div>
     </nav>
   );
