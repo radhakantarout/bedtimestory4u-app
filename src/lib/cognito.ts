@@ -20,7 +20,8 @@ export const signUpUser = (
   password: string,
   phoneNumber: string
 ) => {
-  const attributeList = [];
+  // FIX: Explicitly type the array
+  const attributeList: CognitoUserAttribute[] = [];
 
   const dataEmail = {
     Name: "email",
