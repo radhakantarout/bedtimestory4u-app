@@ -11,12 +11,12 @@ export default function Navbar() {
       </Link>
 
       <div className="flex gap-4">
-        <Link
+        {/*<Link
             href="/create-story"
             className="px-4 py-2 hover:text-pink-400 transition"
         >
             Create Story
-        </Link>
+        </Link> */}
         <Link
           href="/login"
           className="px-4 py-2 border border-white rounded-full hover:bg-white hover:text-black transition"
@@ -31,9 +31,9 @@ export default function Navbar() {
           Get  Started
         </Link>
 
-        <Link href="/clone-voice" className="px-4 py-2 hover:text-pink-400">
+        {/* <Link href="/clone-voice" className="px-4 py-2 hover:text-pink-400">
           Clone Voice
-        </Link>
+        </Link> */}
       </div>
     </nav>
   );
